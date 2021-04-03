@@ -16,10 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from tweetme.apps.tweets.views import tweet_detail_view, tweet_list_view
+from tweetme.apps.tweets.views import home_view, tweet_detail_view, tweet_list_view
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^home', home_view),
     url(r'^tweet/(?P<tweet_id>\d)', tweet_detail_view),
-    url(r'^tweet', tweet_list_view),
+    url(r'^tweets', tweet_list_view),
 ]

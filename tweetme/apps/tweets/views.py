@@ -4,6 +4,11 @@ from django.http import HttpResponse, Http404, JsonResponse
 from tweetme.apps.tweets.models import Tweet
 
 
+def home_view(request, *args, **kwargs):
+    return render(
+        request, "home.html",
+        context={}, status=200)
+
 def tweet_detail_view(request, tweet_id, *args, **kwargs):
     try:
         obj = Tweet.objects.get(id=tweet_id)
