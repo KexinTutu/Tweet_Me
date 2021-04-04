@@ -3,6 +3,7 @@ from django.shortcuts import render
 
 from django.http import HttpResponse, Http404, JsonResponse
 from tweetme.apps.tweets.models import Tweet
+from tweetme.apps.tweets.forms import TweetForm
 
 
 def home_view(request, *args, **kwargs):
@@ -10,6 +11,14 @@ def home_view(request, *args, **kwargs):
         request, "home.html",
         context={}, status=200)
 
+def tweet_create_view(request, *args, **kwargs):
+    form = TweetForm(request.POST or None)
+    if form.is_valid():
+        tweet = form.save(commit=False)
+        tweet.save()
+        form = TweetForm()
+    return render(request, 'form.html', context={"form": form})
+    
 def tweet_detail_view(request, tweet_id, *args, **kwargs):
     try:
         obj = Tweet.objects.get(id=tweet_id)
