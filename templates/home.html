@@ -10,7 +10,7 @@
 
 <div class='row mb-3'>
     <div class='col-md-4 mx-auto col-10'>
-        <form class='form' method='POST' action='/tweet/create'>
+        <form class='form' id='tweet-create-form' method='POST' action='/tweet/create'>
             {% csrf_token %}
             <input type='hidden' value='/home' name='next' />
             <textarea class='form-control' name='content'></textarea>
@@ -23,12 +23,51 @@
 </div>
 
 <script>
-const tweetsElement = document.getElementById("tweets")
 
-const xhr = new XMLHttpRequest()
-const method = 'GET'
-const url = '/tweets'
-const responseType = "json"
+const tweetCreateFormEl = document.getElementById("tweet-create-form")
+const tweetsEl = document.getElementById("tweets")
+
+tweetCreateFormEl.addEventListener("submit", handleTweetCreateForm)
+
+function handleTweetCreateForm(event) {
+    event.preventDefault();
+    const createForm = event.target
+    const formData = new FormData(createForm)
+    const url = createForm.getAttribute("action")
+    const method = createForm.getAttribute("method")
+
+    const xhr = new XMLHttpRequest()
+    xhr.open(method, url)
+    xhr.onload = function() {
+        const serverResponse = xhr.response
+        const tweetsEl = document.getElementById("tweets")
+        loadTweets(tweetsEl)
+    }
+    xhr.send(formData)
+}
+
+function loadTweets(tweetsElement) {
+    const xhr = new XMLHttpRequest()
+    const method = 'GET'
+    const url = '/tweets'
+    const responseType = "json"
+
+    xhr.responseType = responseType
+    xhr.open(method, url)
+    xhr.onload = function() {
+        var tweets = xhr.response.reponse
+        var finalTweetsElement = ""
+        for (var i=0; i<tweets.length; i++) {
+            var tweet = tweets[i]
+            var tweetElement = formatTweetElement(tweet)
+            finalTweetsElement += tweetElement
+        }
+        tweetsElement.innerHTML = finalTweetsElement
+
+    }
+    xhr.send()
+}
+
 
 function handleLikeBtn(tweet_id, likes) {
     likes++
@@ -44,20 +83,8 @@ function formatTweetElement(tweet) {
         "</div></div>"
 }
 
-xhr.responseType = responseType
-xhr.open(method, url)
-xhr.onload = function() {
-    var tweets = xhr.response.reponse
-    var finalTweetsElement = ""
-    for (var i=0; i<tweets.length; i++) {
-        var tweet = tweets[i]
-        var tweetElement = formatTweetElement(tweet)
-        finalTweetsElement += tweetElement
-    }
-    tweetsElement.innerHTML = finalTweetsElement
+loadTweets(tweetsEl)
 
-}
-xhr.send()
 </script>
 
 {% endblock content %}
