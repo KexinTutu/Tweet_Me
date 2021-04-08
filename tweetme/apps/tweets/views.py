@@ -17,6 +17,9 @@ def tweet_create_view(request, *args, **kwargs):
     if form.is_valid():
         tweet = form.save(commit=False)
         tweet.save()
+        if request.is_ajax():
+            return JsonResponse({}, status=201)
+
         if next_url:
             return redirect(next_url)
         form = TweetForm()
