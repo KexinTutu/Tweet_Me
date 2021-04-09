@@ -18,7 +18,7 @@ def tweet_create_view(request, *args, **kwargs):
         tweet = form.save(commit=False)
         tweet.save()
         if request.is_ajax():
-            return JsonResponse({}, status=201)
+            return JsonResponse(tweet.serialize(), status=201)
 
         if next_url:
             return redirect(next_url)
@@ -37,7 +37,7 @@ def tweet_detail_view(request, tweet_id, *args, **kwargs):
 
 def tweet_list_view(request, *args, **kwargs):
     tweets = Tweet.objects.all()
-    tweet_list = [{'id': tweet.id, 'content': tweet.content, 'likes': random.randint(0, 300)} for tweet in tweets]
+    tweet_list = [tweet.serialize() for tweet in tweets]
     data = {
         "reponse": tweet_list
     }
