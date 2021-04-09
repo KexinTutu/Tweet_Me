@@ -23,6 +23,9 @@ def tweet_create_view(request, *args, **kwargs):
         if next_url:
             return redirect(next_url)
         form = TweetForm()
+    elif form.errors:
+        if request.is_ajax():
+            return JsonResponse(form.errors, status=400)
     return render(request, 'form.html', context={"form": form})
 
 def tweet_detail_view(request, tweet_id, *args, **kwargs):

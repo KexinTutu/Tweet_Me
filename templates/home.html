@@ -49,7 +49,14 @@ function handleTweetCreateForm(event) {
             const ogHtml = tweetsEl.innerHTML
             tweetsEl.innerHTML = newTweetElement + ogHtml
             createForm.reset()
+        } else if (xhr.status === 400) {
+            const errorJson = xhr.response
+        } else if (xhr.status === 500) {
+            alert("Server error X_X")
         }
+    }
+    xhr.onerror = function() {
+        alert("Error occurred. Please try again later.")
     }
     xhr.send(formData)
 }
