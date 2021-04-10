@@ -12,6 +12,7 @@
     <div class='col-md-4 mx-auto col-10'>
         <form class='form' id='tweet-create-form' method='POST' action='/tweet/create'>
             {% csrf_token %}
+            <div class='d-none alert alert-danger' id='tweet-create-form-error'></div>
             <input type='hidden' value='/home' name='next' />
             <textarea required='required' class='form-control' name='content'></textarea>
             <button type='submit' class='btn btn-primary'>Tweet</button>
@@ -29,6 +30,18 @@ const tweetsEl = document.getElementById("tweets")
 
 tweetCreateFormEl.addEventListener("submit", handleTweetCreateForm)
 
+function handleTweetFormError(msg, is_display) {
+    var errorDiv = document.getElementById("tweet-create-form-error")
+    if (is_display === true) {
+        // show error
+        errorDiv.setAttribute("class", "d-block alert alert-danger")
+        errorDiv.innerText = msg
+    } else {
+        // hide error
+        errorDiv.setAttribute("class", "d-none alert alert-danger")
+    }
+}
+
 function handleTweetCreateForm(event) {
     event.preventDefault();
     const createForm = event.target
@@ -44,6 +57,8 @@ function handleTweetCreateForm(event) {
     xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
     xhr.onload = function() {
         if (xhr.status === 201) {
+            // to hide error div when there's no error
+            handleTweetFormError("", false)
             const newTweet = xhr.response
             const newTweetElement = formatTweetElement(newTweet)
             const ogHtml = tweetsEl.innerHTML
@@ -51,6 +66,18 @@ function handleTweetCreateForm(event) {
             createForm.reset()
         } else if (xhr.status === 400) {
             const errorJson = xhr.response
+            const contentError = errorJson.content
+            if (contentError) {
+                let contentErrorMsg = contentError[0]
+                if (contentErrorMsg) {
+                    handleTweetFormError(contentErrorMsg, true)
+                } else {
+                    // 400 without error msg
+                    alert('an error occured')
+                }
+            } else {
+                alert('an error occured')
+            }
         } else if (xhr.status === 500) {
             alert("Server error X_X")
         }
