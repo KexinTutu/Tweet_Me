@@ -1,4 +1,5 @@
 import random
+from django.conf import settings
 from django.shortcuts import render, redirect
 
 from django.http import HttpResponse, Http404, JsonResponse
@@ -12,10 +13,16 @@ def home_view(request, *args, **kwargs):
         context={}, status=200)
 
 def tweet_create_view(request, *args, **kwargs):
+    user = request.user
+    if not user.is_authenticated:
+        if request.is_ajax():
+            return JsonResponse({}, status=401)
+        return redirect(settings.LOGIN_URL)
     form = TweetForm(request.POST or None)
     next_url = request.POST.get('next') or None
     if form.is_valid():
         tweet = form.save(commit=False)
+        tweet.user = user
         tweet.save()
         if request.is_ajax():
             return JsonResponse(tweet.serialize(), status=201)
