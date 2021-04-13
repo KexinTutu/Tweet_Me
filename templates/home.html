@@ -97,7 +97,7 @@ function loadTweets(tweetsElement) {
     xhr.responseType = responseType
     xhr.open(method, url)
     xhr.onload = function() {
-        var tweets = xhr.response.reponse
+        var tweets = xhr.response
         var finalTweetsElement = ""
         for (var i=0; i<tweets.length; i++) {
             var tweet = tweets[i]
