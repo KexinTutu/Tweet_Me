@@ -1,4 +1,7 @@
 # Tweet_Me
 
 A simple tweeter like application.
-Django + Vue.js
+Django + react
+
+docker-compose build
+docker-compose up -d
