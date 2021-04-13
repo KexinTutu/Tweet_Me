@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 LOGIN_URL = "/login"
+MAX_TWEET_LENGTH = 240
 
 
 # Application definition
