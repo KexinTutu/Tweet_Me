@@ -1,19 +1,26 @@
 version: "3.9"
 
 services:
-  web:
-    build: .
+  api:
+    build: ./api
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./api:/app/api
     ports:
       - "8000:8000"
     depends_on:
       - db
+  ui:
+    build: ./ui
+    command: ["npm", "start"]
+    volumes:
+      - ./ui:/app/ui
+    ports:
+      - "8080:3000"
   db:
     image: postgres
     volumes:
-      - ./data/db:/var/lib/postgresql/data
+      - ./api/data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres

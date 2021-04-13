@@ -1,10 +1,10 @@
 FROM python:3
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /code
+WORKDIR /app/api
 
-COPY requirements.txt /code/
+COPY requirements.txt /app/api/
 
 RUN pip install -r requirements.txt
 
-COPY . /code/
+COPY . /app/api
