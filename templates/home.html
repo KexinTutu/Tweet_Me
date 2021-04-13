@@ -78,7 +78,10 @@ function handleTweetCreateForm(event) {
             } else {
                 alert('an error occured')
             }
-        } else if (xhr.status === 500) {
+        } else if (xhr.status === 401 || xhr.status === 403) {
+            alert("You must login!")
+            window.location.href = "/login"
+        }else if (xhr.status === 500) {
             alert("Server error X_X")
         }
     }
