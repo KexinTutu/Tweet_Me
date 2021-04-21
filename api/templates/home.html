@@ -10,7 +10,7 @@
 
 <div class='row mb-3'>
     <div class='col-md-4 mx-auto col-10'>
-        <form class='form' id='tweet-create-form' method='POST' action='/tweet/create'>
+        <form class='form' id='tweet-create-form' method='POST' action='/tweets'>
             {% csrf_token %}
             <div class='d-none alert alert-danger' id='tweet-create-form-error'></div>
             <input type='hidden' value='/home' name='next' />

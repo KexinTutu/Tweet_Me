@@ -17,15 +17,6 @@ def home_view(request, *args, **kwargs):
         request, "home.html",
         context={}, status=200)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def tweet_create_view(request, *args, **kwargs):
-    serializer = TweetSerializer(data=request.POST)
-
-    if serializer.is_valid(raise_exception=True):
-        tweet = serializer.save(user=request.user)
-        return JsonResponse(serializer.data, status=201)
-
 @api_view(['GET'])
 def tweet_detail_view(request, tweet_id, *args, **kwargs):
     try:
@@ -36,10 +27,20 @@ def tweet_detail_view(request, tweet_id, *args, **kwargs):
     serilizer = TweetSerializer(tweet)
     return Response(serilizer.data, status=200)
 
-@api_view(['GET'])
-def tweet_list_view(request, *args, **kwargs):
-    tweets = Tweet.objects.all()
-    serilizer = TweetSerializer(tweets, many=True)
-    return Response(serilizer.data, status=200)
+@permission_classes([IsAuthenticated])
+@api_view(['GET', 'POST'])
+def tweet_create_list_view(request, *args, **kwargs):
+    if request.method == 'POST':
+        # Create
+        serializer = TweetSerializer(data=request.POST)
+
+        if serializer.is_valid(raise_exception=True):
+            tweet = serializer.save(user=request.user)
+            return JsonResponse(serializer.data, status=201)
+    elif request.method == 'GET':
+        # List
+        tweets = Tweet.objects.all()
+        serilizer = TweetSerializer(tweets, many=True)
+        return Response(serilizer.data, status=200)
 
     
