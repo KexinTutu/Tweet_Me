@@ -17,18 +17,30 @@ def home_view(request, *args, **kwargs):
         request, "home.html",
         context={}, status=200)
 
-@api_view(['GET'])
-def tweet_detail_view(request, tweet_id, *args, **kwargs):
+@api_view(['GET', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def tweet_get_delete_view(request, tweet_id, *args, **kwargs):
     try:
+        print(tweet_id)
         tweet = Tweet.objects.get(id=tweet_id)
     except Tweet.DoesNotExist:
-        return Response({}, status=404)
+        return Response({"message": "Tweet not exist."}, status=404)
 
-    serilizer = TweetSerializer(tweet)
-    return Response(serilizer.data, status=200)
+    if request.method == 'GET':
+        # Get
+        serilizer = TweetSerializer(tweet)
+        return Response(serilizer.data, status=200)
+    elif request.method == 'DELETE':
+        # Delete
+        if tweet.user != request.user:
+            # this tweet doesn't belong to the user
+            return Response({"message": "You cannot delete this tweet."}, status=404)
+        tweet.delete()
+        return Response({"message": "Tweet deleted."}, status=200)
 
-@permission_classes([IsAuthenticated])
+
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def tweet_create_list_view(request, *args, **kwargs):
     if request.method == 'POST':
         # Create
