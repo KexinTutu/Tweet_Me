@@ -8,7 +8,7 @@ from tweetme.apps.tweets.models import Tweet
 class TweetSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tweet
-        fields = '__all__'
+        fields = ['id', 'content']
 
     def validate_content(self, value):
         if len(value) > settings.MAX_TWEET_LENGTH:
