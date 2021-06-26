@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'tweetme.apps.tweets',
+    'tweetme.apps.accounts',
 
     'corsheaders',
 ]

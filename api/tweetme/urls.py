@@ -15,12 +15,20 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.urls import include
+from rest_framework import routers
 
+from tweetme.apps.accounts.views import AccountViewSet, UserViewSet
 from tweetme.apps.tweets.views import home_view, tweet_get_delete_view, TweetListCreateAPIView
 
+router = routers.DefaultRouter()
+router.register(r'api/accounts', AccountViewSet, basename='accounts')
+router.register(r'api/users', UserViewSet, basename='users')
+
 urlpatterns = [
+    url('', include(router.urls)),
     url(r'^admin/', admin.site.urls),
-    url(r'^home', home_view),
-    url(r'^api/tweets', TweetListCreateAPIView.as_view()),
     url(r'^api/tweet/(?P<tweet_id>\d+)', tweet_get_delete_view),
+    url(r'^api/tweets', TweetListCreateAPIView.as_view()),
+    url(r'^home', home_view),
 ]
