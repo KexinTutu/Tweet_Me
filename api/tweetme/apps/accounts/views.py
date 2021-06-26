@@ -4,7 +4,11 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from tweetme.apps.accounts.serializers import SignupSerializer, UserSerializer
+from tweetme.apps.accounts.serializers import (
+    LoginSerializer,
+    SignupSerializer,
+    UserSerializer,
+)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
@@ -13,7 +17,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class AccountViewSet(viewsets.ViewSet):
-    serializer_class = SignupSerializer
+    serializer_class = LoginSerializer
 
     @action(methods=['POST'], detail=False)
     def sign_up(self, request):
@@ -26,3 +30,20 @@ class AccountViewSet(viewsets.ViewSet):
         user = serializer.save()
         login(request, user)
         return Response(status=201)
+
+    @action(methods=['POST'], detail=False)
+    def login(self, request):
+        serializer = LoginSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({
+                'errors': serializer.errors
+            }, status=400)
+
+        user = authenticate(**serializer.validated_data)
+        if not user or user.is_anonymous:
+            return Response({
+                "message": "Username and password do not match."
+            }, status=400)
+
+        login(request, user)
+        return Response(status=200)
