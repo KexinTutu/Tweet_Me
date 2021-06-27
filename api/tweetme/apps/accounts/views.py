@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -12,31 +12,34 @@ from tweetme.apps.accounts.serializers import (
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = User.objects.all().order_by("-date_joined")
     serializer_class = UserSerializer
 
 
 class AccountViewSet(viewsets.ViewSet):
     serializer_class = LoginSerializer
 
-    @action(methods=['POST'], detail=False)
+    @action(methods=["POST"], detail=False)
     def sign_up(self, request):
         serializer = SignupSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({
-                'errors': serializer.errors
+                "message": "Invalid input.",
+                "errors": serializer.errors
             }, status=400)
 
         user = serializer.save()
         login(request, user)
-        return Response(status=201)
+        return Response({
+            "message": "Successfully sign up."}, status=201)
 
-    @action(methods=['POST'], detail=False)
+    @action(methods=["POST"], detail=False)
     def login(self, request):
         serializer = LoginSerializer(data=request.data)
         if not serializer.is_valid():
             return Response({
-                'errors': serializer.errors
+                "message": "Invalid input.",
+                "errors": serializer.errors
             }, status=400)
 
         user = authenticate(**serializer.validated_data)
@@ -46,4 +49,11 @@ class AccountViewSet(viewsets.ViewSet):
             }, status=400)
 
         login(request, user)
-        return Response(status=200)
+        return Response({
+            "message": "Successfully login."}, status=200)
+
+    @action(methods=["POST"], detail=False)
+    def logout(self, request):
+        logout(request)
+        return Response({
+            "message": "Successfully logout."})
