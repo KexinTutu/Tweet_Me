@@ -20,15 +20,16 @@ from rest_framework import routers
 
 from tweetme.apps.accounts.views import AccountViewSet, UserViewSet
 from tweetme.apps.tweets.views import home_view, tweet_get_delete_view, TweetListCreateAPIView
+from tweetme.apps.friendships.views import FriendshipViewSet
 
 router = routers.DefaultRouter()
 router.register(r'api/accounts', AccountViewSet, basename='accounts')
 router.register(r'api/users', UserViewSet, basename='users')
+router.register(r'api/friendships', FriendshipViewSet, basename='friendships')
 
 urlpatterns = [
     url('', include(router.urls)),
     url(r'^admin/', admin.site.urls),
     url(r'^api/tweet/(?P<tweet_id>\d+)', tweet_get_delete_view),
     url(r'^api/tweets', TweetListCreateAPIView.as_view()),
-    url(r'^home', home_view),
 ]
