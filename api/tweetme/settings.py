@@ -42,8 +42,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'tweetme.apps.tweets',
     'tweetme.apps.accounts',
+    'tweetme.apps.friendships',
+    'tweetme.apps.tweets',
 
     'corsheaders',
 ]
